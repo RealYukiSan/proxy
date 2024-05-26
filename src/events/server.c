@@ -10,7 +10,7 @@
 #include <utils/crypto.h>
 #include <packet/packet.h>
 
-void ConnectToServer(config_t *config) {
+void ConnectToServer(void) {
     if (isSendToServer) {
         printf("[PROXY EVENT] Client connected into proxy\n");
         printf("[PROXY EVENT] Connecting to subserver...\n");
@@ -105,8 +105,11 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
         case 3: {
             char* packetText = GetTextPointerFromPacket(ev.packet);
             printf("[PROXY EVENT] Packet 3: received packet text: %s\n", packetText);
-            if (strcmp(packetText, "action|quit") == 0)
-                enet_peer_disconnect_now(server, 0);
+            if (strcmp(packetText, "action|quit") == 0) {
+                running = 0;
+                restart = 1;
+            }
+            
             enet_peerSend(ev.packet, relay);
             break;
         }
@@ -134,7 +137,8 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
     }
 }
 
-void ServerDisconnect(ENetPeer *relay) {
+void ServerDisconnect(void) {
     printf("[PROXY EVENT] Client just disconnected from Proxy\n");
-    enet_peer_disconnect_now(relay, 0);
+    running = 0;
+    restart = 1;
 }

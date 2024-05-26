@@ -5,7 +5,9 @@
 #include <config.h>
 #include <utils/string.h>
 
-void LoadConfig(config_t *config) {
+config_t *config;
+
+void LoadConfig(void) {
     FILE *file = fopen("config.conf", "rb");
     size_t size;
 
@@ -86,10 +88,10 @@ void LoadConfig(config_t *config) {
     free(content);
 }
 
-config_t *InitConfig(void) {
-    config_t *config = malloc(sizeof(config_t));
-    if (!config) return NULL;
-    LoadConfig(config);
-    return config;
+int InitConfig(void) {
+    config = malloc(sizeof(config_t));
+    if (!config) return 0;
+    LoadConfig();
+    return 1;
 }
 

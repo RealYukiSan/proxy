@@ -4,8 +4,8 @@
 
 #include <config.h>
 
-void ConnectToServer(config_t *config);
-void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_t *config);
-void ServerDisconnect(ENetPeer *relay);
+void ConnectToServer(void);
+void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay);
+void ServerDisconnect(void);
 
 #endif // SERVER_EVENT_H

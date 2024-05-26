@@ -12,6 +12,7 @@ typedef struct {
     char isSpoofed;
 } config_t;
 
-config_t *InitConfig(void);
-void LoadConfig(config_t *config); 
+extern config_t *config;
+int InitConfig(void);
+void LoadConfig(void); 
 #endif // CONFIG_H

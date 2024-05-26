@@ -38,6 +38,8 @@ typedef struct {
     int LocalNetid;
 } spawn_t;
 
+extern int running;
+extern int restart;
 extern char isSendToServer;
 extern user_t user;
 extern packet_t OnPacket;

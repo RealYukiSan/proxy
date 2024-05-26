@@ -12,7 +12,7 @@ void ConnectToRelay(void) {
     printf("[RELAY EVENT] Proxy connected into Server\n");
 }
 
-void RelayRecivePacket(ENetEvent ev, ENetPeer *server, ENetPeer *relay, config_t *config) {
+void RelayRecivePacket(ENetEvent ev, ENetPeer *server, ENetPeer *relay) {
     switch(GetMessageTypeFromPacket(ev.packet)) {
         case 1: {
             printf("[RELAY EVENT] Server just send Hello Packet\n");
@@ -205,7 +205,6 @@ void RelayRecivePacket(ENetEvent ev, ENetPeer *server, ENetPeer *relay, config_t
     }
 }
 
-void RelayClosed(ENetPeer *server) {
+void RelayClosed(void) {
     printf("[RELAY EVENT] Proxy just disconnected from Server\n");
-    enet_peer_disconnect_now(server, 0);
 }

@@ -1,4 +1,5 @@
 #include <core/ENetService.h>
+#include <config.h>
 
 ENetAddress *ENetGrowtopiaAddress;
 ENetAddress *ENetProxyAddress;
@@ -33,7 +34,7 @@ ENetHost *CreateENetServer(void) {
     return ENetServer;
 }
 
-ENetHost *CreateENetClient(config_t *config) {
+ENetHost *CreateENetClient(void) {
     ENetRelay = enet_host_create(NULL, 1, 2, 0, 0);
     ENetRelay->checksum = enet_crc32;
     ENetRelay->usingNewPacket = config->usingNewPacket;
@@ -47,7 +48,7 @@ void ENetDestroy(void) {
     free(ENetProxyAddress);
     if (ENetServerPeer) enet_peer_disconnect_now(ENetServerPeer, 0);
     if (ENetRelayPeer) enet_peer_disconnect_now(ENetRelayPeer, 0);
-    enet_host_destroy(ENetRelay);
-    enet_host_destroy(ENetServer);
+    if (ENetRelay) enet_host_destroy(ENetRelay);
+    if (ENetServer) enet_host_destroy(ENetServer);
     enet_deinitialize();
 }

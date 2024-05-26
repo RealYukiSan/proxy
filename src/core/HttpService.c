@@ -10,6 +10,7 @@
 #include <tlse.h>
 #include <core/HttpService.h>
 #include <utils/verbose.h>
+#include <config.h>
 
 const unsigned char* certPem = "-----BEGIN CERTIFICATE-----\n\
 MIIDeDCCAmCgAwIBAgIULbUEh/rroH5AIbcdBbMNOGt3uiQwDQYJKoZIhvcNAQEL\n\
@@ -140,7 +141,7 @@ struct HTTPInfo HTTPSClient(const char* website) {
 }
 
 
-void* HTTPSServer(void *config) {
+void* HTTPSServer(void *unused) {
     int socket_desc, client_sock;
     socklen_t c;
     struct sockaddr_in server, client;
@@ -154,13 +155,13 @@ void* HTTPSServer(void *config) {
 
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons(((config_t *)(config))->httpsPort);
+    server.sin_port = htons(config->httpsPort);
 
     int enable = 1;
     setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &enable, 4);
 
     if (bind(socket_desc, (struct sockaddr*)&server, sizeof(server)) < 0) {
-        printf("[HTTP SERVER] Failed to bind on port %d make sure run with root permission or if you are not a root user, please change it to 8080\n", ((config_t *)(config))->httpsPort);
+        printf("[HTTP SERVER] Failed to bind on port %d make sure run with root permission or if you are not a root user, please change it to 8080\n", config->httpsPort);
         exit(1);
     }
 
@@ -183,7 +184,7 @@ void* HTTPSServer(void *config) {
         exit(2);
     }
 
-    printf("[HTTP SERVER] HTTPS Server Running On Port %d\n", ((config_t *)(config))->httpsPort);
+    printf("[HTTP SERVER] HTTPS Server Running On Port %d\n", config->httpsPort);
 
     while(1) {
         client_sock = accept(socket_desc, (struct sockaddr*)&client, &c);

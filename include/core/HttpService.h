@@ -1,6 +1,5 @@
 #ifndef HTTPSERVER_H
 #define HTTPSERVER_H 
-#include <config.h>
 
 struct HTTPInfo {
     unsigned char* buffer;
@@ -8,6 +7,6 @@ struct HTTPInfo {
 };
 
 struct HTTPInfo HTTPSClient(const char* website);
-void* HTTPSServer(void *config);
+void* HTTPSServer(void *unused);
 
 #endif // HTTPSERVER_H

@@ -14,19 +14,19 @@
 #include <events/relay.h>
 #include <events/server.h>
 
-int run = 1;
+static int initialized = 0;
 
 void signal_recive(int status) {
-    run = 0;
+    (void)status;
+    running = 0;
 }
 
 int main(void) {
-    pthread_t server;
-    config_t *config = InitConfig();
-    
-    if (!config) {
-        printf("Failed to initialize config.\n");
-        return 1;
+    if (!initialized) {
+        if (!InitConfig()) {
+            printf("Failed to initialize config.\n");
+            return 1;
+        }
     }
 
     srand(time(NULL));
@@ -42,12 +42,17 @@ int main(void) {
     ENetInit();
 
     ENetHost *enetServer = CreateENetServer();
-    ENetHost *enetRelay = CreateENetClient(config);
+    ENetHost *enetRelay = CreateENetClient();
     
-    pthread_create(&server, NULL, HTTPSServer, config);
+    if (!initialized) { 
+        pthread_t server;
+        pthread_create(&server, NULL, HTTPSServer, NULL);
+        initialized = 1;
+    }
+
     signal(SIGINT, signal_recive);
 
-    while (run) {
+    while (running) {
         ENetEvent enetServerEvent;
         ENetEvent enetRelayEvent;
 
@@ -55,13 +60,15 @@ int main(void) {
             ENetServerPeer = enetServerEvent.peer;
             switch (enetServerEvent.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                ConnectToServer(config);
+                ConnectToServer();
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                ClientRecivePacket(enetServerEvent, ENetServerPeer, ENetRelayPeer, config);
+                ClientRecivePacket(enetServerEvent, ENetServerPeer, ENetRelayPeer);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                ServerDisconnect(ENetRelayPeer);
+                ServerDisconnect();
+                break;
+            default:
                 break;
             }
         }
@@ -72,18 +79,41 @@ int main(void) {
                 ConnectToRelay();
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                RelayRecivePacket(enetRelayEvent, ENetServerPeer, ENetRelayPeer, config);
+                RelayRecivePacket(enetRelayEvent, ENetServerPeer, ENetRelayPeer);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                RelayClosed(ENetServerPeer);
+                RelayClosed();
+                break;
+            default:
                 break;
             }
         }
     } 
     
     ENetDestroy();
-    free(config);
-    
+
+    if (user.isMetaMalloc) {
+        free(user.meta);
+        user.isMetaMalloc = 0;
+    }
+
+    free(user.wk);
+    free(user.rid);
+    free(user.deviceID);
+    free(user.mac);
+
+    if (restart) {
+        printf("[PROXY MESSAGE] Got Restart Task, Restarting...\n");
+        user.isLogin = 0;
+        running = 1;
+        restart = 0;
+        return main();
+    }
+
+    if (config) 
+        free(config);
+
+
     printf("\n");
     printf("[PROXY MESSAGE] Proxy exited.\n");
 }

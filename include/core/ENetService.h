@@ -1,7 +1,6 @@
 #ifndef ENETSERVICE_H
 #define ENETSERVICE_H
 
-#include <config.h>
 #include <enet/enet.h>
 
 extern ENetAddress *ENetGrowtopiaAddress;
@@ -13,7 +12,7 @@ extern ENetPeer *ENetRelayPeer;
 
 int ENetInit(void);
 ENetHost *CreateENetServer(void);
-ENetHost *CreateENetClient(config_t *config);
+ENetHost *CreateENetClient(void);
 void ENetDestroy(void);
 
 #endif // ENETSERVICE_H
