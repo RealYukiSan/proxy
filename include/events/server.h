@@ -1,6 +1,6 @@
 #ifndef SERVER_EVENT_H
 #define SERVER_EVENT_H
-#include <enet.h>
+#include <enet/enet.h>
 
 #include <config.h>
 

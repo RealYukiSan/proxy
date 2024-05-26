@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <signal.h>
-#include <enet.h>
+#include <enet/enet.h>
 #include <time.h>
 
 #include <config.h>

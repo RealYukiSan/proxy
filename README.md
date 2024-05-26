@@ -12,6 +12,11 @@ In this project i used 2 ENet struct `ENetServer` and `ENetRelay`. `ENetRelay` i
 
 To works with this project you need cmake at least version 3.24 or newer. And dont forget to copy `config.conf`. 
 
+```bash
+$ mkdir build && cd build
+$ cmake -DCMAKE_BUILD_TYPE=Debug ..
+$ make
+```
 
 ## Project License
 This project are open-source for everyone

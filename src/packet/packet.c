@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include <enet.h>
+#include <enet/enet.h>
 
 #include <packet/packet.h>
 

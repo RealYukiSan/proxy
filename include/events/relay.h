@@ -1,6 +1,6 @@
 #ifndef RELAY_EVENT_H
 #define RELAY_EVENT_H
-#include <enet.h>
+#include <enet/enet.h>
 #include <event.h>
 
 void ConnectToRelay(void);

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <enet.h>
+#include <enet/enet.h>
 
 #include <config.h>
 #include <event.h>

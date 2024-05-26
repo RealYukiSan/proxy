@@ -1,7 +1,7 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include <enet.h>
+#include <enet/enet.h>
 #include <stdint.h>
 
 char* GetTextPointerFromPacket(ENetPacket* packet);

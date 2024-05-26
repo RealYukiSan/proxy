@@ -2,7 +2,7 @@
 #define ENETSERVICE_H
 
 #include <config.h>
-#include <enet.h>
+#include <enet/enet.h>
 
 extern ENetAddress *ENetGrowtopiaAddress;
 extern ENetAddress *ENetProxyAddress;
