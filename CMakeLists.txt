@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(proxy)
 
-set(CMAKE_C_FLAGS_DEBUG "-Wall -Wextra -g")
+set(CMAKE_C_FLAGS_DEBUG "-Wall -DVERBOSE -Wextra -g")
 set(CMAKE_C_FLAGS_RELEASE "-Wall -Wextra -O3 -DNDEBUG")
 
 # Enet Module

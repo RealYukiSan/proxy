@@ -9,7 +9,7 @@
 
 #include <tlse.h>
 #include <core/HttpService.h>
-
+#include <utils/verbose.h>
 
 const unsigned char* certPem = "-----BEGIN CERTIFICATE-----\n\
 MIIDeDCCAmCgAwIBAgIULbUEh/rroH5AIbcdBbMNOGt3uiQwDQYJKoZIhvcNAQEL\n\
@@ -211,7 +211,9 @@ void* HTTPSServer(void *config) {
         shutdown(client_sock, SHUT_RDWR);
         close(client_sock);
         SSL_free(client);
+	VERBOSE_PRINT("[HTTP SERVER] Peer successfuly obtain the relay address\n");
     }
+
     SSL_CTX_free(server_ctx);
 }
 
