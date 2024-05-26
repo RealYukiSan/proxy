@@ -10,7 +10,7 @@ void LoadConfig(config_t *config) {
     size_t size;
 
     if (!file) {
-        perror("Failed to open file");
+        perror("Failed to open config file");
         exit(1);
     }
 
