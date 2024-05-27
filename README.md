@@ -27,6 +27,9 @@ $ make
 ```bash
 $ sh gen_clangd.sh
 ```
+
+if the proxy are on different host on your network, you need to adjust the IP in the HTTP Server
+
 ## Contribute
 
 Everyone can share your ideas in here just simple fork this project and make a features. Don't forget to pull request so we can add your ideas.
