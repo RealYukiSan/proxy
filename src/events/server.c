@@ -56,7 +56,7 @@ void ConnectToServer(void) {
     }
 }
 
-void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_t *config) {
+void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay) {
     switch(GetMessageTypeFromPacket(ev.packet)) {
         case 2: {
             char* packetText = GetTextPointerFromPacket(ev.packet);
@@ -64,13 +64,14 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
             if (!user.isLogin) {
                 char** loginInfo = strsplit(packetText, "\n", 0);
                 if (config->usingServerData)
-                    loginInfo[findarray(loginInfo, "meta|")] = CatchMessage("meta|%s", user.meta);
-                else 
-                    loginInfo[findarray(loginInfo, "meta|")] = CatchMessage("meta|%s", config->manualMeta);
+                    sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", user.meta);
+                else
+                    sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", config->manualMeta);
 
                 if (config->isSpoofed) {
                     char* klvGen;
 
+                    // TODO: use sprintf instead of CatchMessage.
                     loginInfo[findarray(loginInfo, "wk|")] = CatchMessage("wk|%s", user.wk);
                     loginInfo[findarray(loginInfo, "rid|")] = CatchMessage("rid|%s", user.rid);
                     loginInfo[findarray(loginInfo, "mac|")] = CatchMessage("mac|%s", user.mac);
@@ -88,7 +89,7 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
                 }
 
                 char* resultSpoofed = arrayjoin(loginInfo, "\n", 1);
-                printf("[PROXY EVENT] Spoofed Login info: %s\n", resultSpoofed);
+                printf("[PROXY EVENT] Spoofed Login info:\n%s\n", resultSpoofed);
                 sendPacket(2, resultSpoofed, relay);
 
                 free(resultSpoofed);
