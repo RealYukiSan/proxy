@@ -145,7 +145,7 @@ void* HTTPSServer(void *unused) {
     int socket_desc, client_sock;
     socklen_t c;
     struct sockaddr_in server, client;
-    const char msg[] = "HTTP/1.1 200 OK\r\nContent-length: 279\r\n\r\nserver|192.168.18.53\nport|17091\ntype|1\n#maint|Proxy maintenance\nbeta_server|beta.growtopiagame.com\nbeta_port|26999\nbeta_type|1\nbeta2_server|beta2.growtopiagame.com\nbeta2_port|26999\nbeta2_type|1\nbeta3_server|34.202.7.77\nbeta3_port|26999\nbeta3_type|1\ntype2|0\nmeta|localhost\nRTENDMARKERBS1001";
+    const char msg[] = "HTTP/1.1 200 OK\r\nContent-length: 279\r\n\r\nserver|127.0.0.1\nport|17091\ntype|1\n#maint|Proxy maintenance\nbeta_server|beta.growtopiagame.com\nbeta_port|26999\nbeta_type|1\nbeta2_server|beta2.growtopiagame.com\nbeta2_port|26999\nbeta2_type|1\nbeta3_server|34.202.7.77\nbeta3_port|26999\nbeta3_type|1\ntype2|0\nmeta|localhost\nRTENDMARKERBS1001";
 
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_desc == -1) {

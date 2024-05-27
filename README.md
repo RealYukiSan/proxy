@@ -20,6 +20,7 @@ To works with this project you need cmake at least version 3.24 or newer. And do
 ```bash
 $ mkdir build && cd build
 $ cmake -DCMAKE_BUILD_TYPE=Debug ..
+$ cp ../config.conf .
 $ make
 ```
 > Optional for clangd LSP
