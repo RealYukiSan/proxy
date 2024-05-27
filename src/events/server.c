@@ -52,11 +52,10 @@ void ConnectToServer(void) {
             ENetProxyAddress->port = config->manualPort;
             ENetRelayPeer = enet_host_connect(ENetRelay, ENetProxyAddress, 2, 0);
         }
-
     }
 }
 
-void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_t *config) {
+void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay) {
     switch(GetMessageTypeFromPacket(ev.packet)) {
         case 2: {
             char* packetText = GetTextPointerFromPacket(ev.packet);
@@ -64,13 +63,14 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
             if (!user.isLogin) {
                 char** loginInfo = strsplit(packetText, "\n", 0);
                 if (config->usingServerData)
-                    loginInfo[findarray(loginInfo, "meta|")] = CatchMessage("meta|%s", user.meta);
-                else 
-                    loginInfo[findarray(loginInfo, "meta|")] = CatchMessage("meta|%s", config->manualMeta);
+                    sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", user.meta);
+                else
+                    sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", config->manualMeta);
 
                 if (config->isSpoofed) {
                     char* klvGen;
 
+                    // TODO: use sprintf instead of CatchMessage.
                     loginInfo[findarray(loginInfo, "wk|")] = CatchMessage("wk|%s", user.wk);
                     loginInfo[findarray(loginInfo, "rid|")] = CatchMessage("rid|%s", user.rid);
                     loginInfo[findarray(loginInfo, "mac|")] = CatchMessage("mac|%s", user.mac);
@@ -88,7 +88,7 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
                 }
 
                 char* resultSpoofed = arrayjoin(loginInfo, "\n", 1);
-                printf("[PROXY EVENT] Spoofed Login info: %s\n", resultSpoofed);
+                printf("[PROXY EVENT] Spoofed Login info:\n%s\n", resultSpoofed);
                 sendPacket(2, resultSpoofed, relay);
 
                 free(resultSpoofed);
@@ -116,6 +116,7 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay, config_
         case 4: {
             switch(ev.packet->data[4]) {
                 case 26: {
+                    printf("[PROXY EVENT] Undocumented stuff, TODO: assign a name to each number for better documentation and readability.\n");
                     enet_peerSend(ev.packet, relay);
                     enet_peer_disconnect_now(server, 0);
                     enet_peer_disconnect_now(relay, 0);

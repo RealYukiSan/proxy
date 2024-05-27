@@ -1,5 +1,4 @@
 #include <event.h>
-#include <stdio.h>
 
 int running = 1;
 int restart = 0;
