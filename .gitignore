@@ -1,2 +1,5 @@
 build
 .clangd
+observer/main
+observer/config.conf
+**/*.o
