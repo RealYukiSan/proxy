@@ -20,6 +20,7 @@ To works with this project you need cmake at least version 3.24 or newer. And do
 ```bash
 $ mkdir build && cd build
 $ cmake -DCMAKE_BUILD_TYPE=Debug ..
+$ cp ../config.conf .
 $ make
 ```
 > Optional for clangd LSP
@@ -27,6 +28,9 @@ $ make
 ```bash
 $ sh gen_clangd.sh
 ```
+
+if the proxy are on different host on your network, you need to adjust the IP in the HTTP Server
+
 ## Contribute
 
 Everyone can share your ideas in here just simple fork this project and make a features. Don't forget to pull request so we can add your ideas.

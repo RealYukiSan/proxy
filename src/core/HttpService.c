@@ -212,7 +212,7 @@ void* HTTPSServer(void *unused) {
         shutdown(client_sock, SHUT_RDWR);
         close(client_sock);
         SSL_free(client);
-	VERBOSE_PRINT("[HTTP SERVER] Peer successfuly obtain the relay address\n");
+	VERBOSE_PRINT("[HTTP SERVER] Peer successfuly obtain the server address\n");
     }
 
     SSL_CTX_free(server_ctx);

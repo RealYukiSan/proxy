@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(proxy)
 
-set(CMAKE_C_FLAGS_DEBUG "-Wall -DVERBOSE -Wextra -g")
+set(CMAKE_C_FLAGS_DEBUG "-Wall -DVERBOSE -Wextra -ggdb3")
 set(CMAKE_C_FLAGS_RELEASE "-Wall -Wextra -O3 -DNDEBUG")
 
 # Enet Module
@@ -18,7 +18,6 @@ target_include_directories(Tlse PUBLIC "${PROJECT_SOURCE_DIR}/thirdparty/tlse")
 file(GLOB SHA256_SRC "${PROJECT_SOURCE_DIR}/thirdparty/sha256/*.c")
 add_library(Sha256 STATIC ${SHA256_SRC})
 target_include_directories(Sha256 PUBLIC "${PROJECT_SOURCE_DIR}/thirdparty/sha256")
-
 
 # Project Setup
 file(GLOB_RECURSE PROJECT_SRC 
