@@ -191,6 +191,7 @@ void RelayRecivePacket(ENetEvent ev, ENetPeer *server, ENetPeer *relay) {
                     break;
                 }
                 default: {
+                    printf("[RELAY EVENT] Unknown stuff: %d\n", GetMessageTypeFromPacket(ev.packet));
                     enet_peerSend(ev.packet, server);
                     break;
                 }

@@ -52,7 +52,6 @@ void ConnectToServer(void) {
             ENetProxyAddress->port = config->manualPort;
             ENetRelayPeer = enet_host_connect(ENetRelay, ENetProxyAddress, 2, 0);
         }
-
     }
 }
 
@@ -117,6 +116,7 @@ void ClientRecivePacket(ENetEvent ev, ENetPeer* server, ENetPeer* relay) {
         case 4: {
             switch(ev.packet->data[4]) {
                 case 26: {
+                    printf("[PROXY EVENT] Undocumented stuff, TODO: assign a name to each number for better documentation and readability.\n");
                     enet_peerSend(ev.packet, relay);
                     enet_peer_disconnect_now(server, 0);
                     enet_peer_disconnect_now(relay, 0);
