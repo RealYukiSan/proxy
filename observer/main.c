@@ -118,7 +118,6 @@ int main(void)
                 }
                 puts("");
                 enet_peer_send(ENetRelayPeer, 0, enetServerEvent.packet);
-                enet_packet_destroy(enetServerEvent.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 puts("[SERVER EVENT] the server's peer disconnected.");
@@ -155,7 +154,6 @@ int main(void)
                 }
                 puts("");
                 enet_peer_send(ENetServerPeer, 0, enetRelayEvent.packet);
-                enet_packet_destroy(enetRelayEvent.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 puts("[RELAY EVENT] the relay peer disconnected.");
