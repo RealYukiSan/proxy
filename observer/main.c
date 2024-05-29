@@ -22,6 +22,9 @@ TODO: switch to subserver (?)
 #include "config.h"
 #include "utils/string.h"
 
+#define MAX_PARTS 100
+#define BONUS_LENGTH 255
+
 typedef struct {
     char* meta;
     char isMetaMalloc;
@@ -37,6 +40,34 @@ user_t user;
 ENetPeer *ENetServerPeer;
 ENetPeer *ENetRelayPeer;
 char isSendToServer;
+
+char **split(char *str, char *delim)
+{
+    char** parts = malloc(MAX_PARTS * sizeof(char*));
+    if (parts == NULL) {
+        fprintf(stderr, "Memory allocation failed!\n");
+        exit(1);
+    }
+
+    int part_count = 0;
+    char* token = strtok(str, delim);  // Get the first part
+
+    while (token != NULL && part_count < MAX_PARTS) {
+        char *item = malloc(strlen(token) + BONUS_LENGTH);
+        if (item == NULL) {
+            fprintf(stderr, "Memory allocation failed!\n");
+            exit(1);
+        }
+        strcpy(item, token);
+        parts[part_count] = item; // Duplicate the part to avoid overwriting
+        part_count++;
+        token = strtok(NULL, delim);   // Get the next part
+    }
+
+    parts[part_count] = NULL; // Terminate the array with a NULL pointer
+
+    return parts;
+}
 
 int main(void)
 {
@@ -107,17 +138,28 @@ int main(void)
                 }
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                puts("[SERVER EVENT] packet received from the server peer...");
-                puts("[SERVER EVENT] forward it to the relay peer...");
-                for (int i = 0; i < enetServerEvent.packet->dataLength; i++) {
-                    char byte = enetServerEvent.packet->data[i];
-                    if (isalnum(byte))
-                        putchar(byte);
-                    else
-                        printf(" %02hhX ", byte);
+                if (ENetRelayPeer) {
+                    if (enetServerEvent.packet->data[0] == 2) {
+                        char** loginInfo = split((char *)&enetServerEvent.packet->data[4], "\n");
+                        sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", user.meta);
+                        char* updatedMeta = arrayjoin(loginInfo, "\n", 1);
+                        enet_packet_resize(enetServerEvent.packet, strlen(updatedMeta) + 1);
+                        strcpy((char *)&enetServerEvent.packet->data[4], updatedMeta);
+                    }
+
+                    puts("[SERVER EVENT] packet received from the server peer...");
+                    puts("[SERVER EVENT] forward it to the relay peer...");
+
+                    for (int i = 0; i < enetServerEvent.packet->dataLength; i++) {
+                        char byte = enetServerEvent.packet->data[i];
+                        if (isalnum(byte))
+                            putchar(byte);
+                        else
+                            printf(" %02hhX ", byte);
+                    }
+                    puts("");
+                    enet_peer_send(ENetRelayPeer, 0, enetServerEvent.packet);
                 }
-                puts("");
-                enet_peer_send(ENetRelayPeer, 0, enetServerEvent.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 puts("[SERVER EVENT] the server's peer disconnected.");
