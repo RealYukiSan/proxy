@@ -2,7 +2,7 @@
 #define HTTPSERVER_H 
 
 struct HTTPInfo {
-    unsigned char* buffer;
+    char* buffer;
     int bufferLen;
 };
 

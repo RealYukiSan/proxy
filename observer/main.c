@@ -67,12 +67,16 @@ int main(void)
 
     ENetHost *enetServer = enet_host_create(ENetProxyAddress, 1024, 10, 0, 0);
     enetServer->checksum = enet_crc32;
+    enetServer->usingNewPacketForServer = 0;
     enet_host_compress_with_range_coder(enetServer);
 
     ENetHost *enetRelay = enet_host_create(NULL, 1, 2, 0, 0);
     enetRelay->checksum = enet_crc32;
     enetRelay->usingNewPacket = 1;
     enet_host_compress_with_range_coder(enetRelay);
+
+    // unsigned char server_destroyed = 0;
+    // unsigned char relay_destroyed = 0;
     
     puts("starting event loop...");
     while (1) {
@@ -85,17 +89,22 @@ int main(void)
             case ENET_EVENT_TYPE_CONNECT:
                 puts("[SERVER EVENT] connected to the server's peer");
 
-                struct HTTPInfo info;
-                info = HTTPSClient(config->serverDataIP);
+                if (!ENetRelayPeer) {
+                    struct HTTPInfo info;
+                    info = HTTPSClient(config->serverDataIP);
 
-                char** arr = strsplit(info.buffer + (findstr(info.buffer, "server|") - 7), "\n", 0);
+                    char** arr = strsplit(info.buffer + (findstr(info.buffer, "server|") - 7), "\n", 0);
 
-                enet_address_set_host(ENetGrowtopiaAddress, arr[findarray(arr, "server|")] + 7);
-                ENetGrowtopiaAddress->port = atoi(arr[findarray(arr, "port|")] + 5);
-                ENetRelayPeer = enet_host_connect(enetRelay, ENetGrowtopiaAddress, 2, 0);
-                asprintf(&user.meta, "%s", arr[findarray(arr, "meta|")] + 5);
+                    enet_address_set_host(ENetGrowtopiaAddress, arr[findarray(arr, "server|")] + 7);
+                    ENetGrowtopiaAddress->port = atoi(arr[findarray(arr, "port|")] + 5);
+                    ENetRelayPeer = enet_host_connect(enetRelay, ENetGrowtopiaAddress, 2, 0);
+                    printf("[RELAY EVENT] connecting to %s:%s...\n", arr[findarray(arr, "server|")] + 7, arr[findarray(arr, "port|")] + 5);
+                    if (user.isMetaMalloc) free(user.meta);
+                    asprintf(&user.meta, "%s", arr[findarray(arr, "meta|")] + 5);
+                    user.isMetaMalloc = 1;
 
-                free(arr);
+                    free(arr);
+                }
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 puts("[SERVER EVENT] packet received from the server peer...");
@@ -109,9 +118,20 @@ int main(void)
                 }
                 puts("");
                 enet_peer_send(ENetRelayPeer, 0, enetServerEvent.packet);
+                enet_packet_destroy(enetServerEvent.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 puts("[SERVER EVENT] the server's peer disconnected.");
+                enet_host_flush(enetServer);
+                enet_peer_disconnect_now(ENetServerPeer, 0);
+
+                // server_destroyed = 1;
+
+                // if (!relay_destroyed) {
+                //     enet_host_flush(enetRelay);
+                //     enet_peer_disconnect_now(ENetRelayPeer, 0);
+                //     relay_destroyed = 1;
+                // } else relay_destroyed = 0;
                 break;
             default:
                 break;
@@ -135,9 +155,21 @@ int main(void)
                 }
                 puts("");
                 enet_peer_send(ENetServerPeer, 0, enetRelayEvent.packet);
+                enet_packet_destroy(enetRelayEvent.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 puts("[RELAY EVENT] the relay peer disconnected.");
+                enet_host_flush(enetRelay);
+                enet_peer_disconnect_now(ENetRelayPeer, 0);
+                ENetRelayPeer = NULL;
+
+                // relay_destroyed = 1;                
+
+                // if (!server_destroyed) {
+                //     enet_host_flush(enetServer);
+                //     enet_peer_disconnect_now(ENetServerPeer, 0);
+                //     server_destroyed = 1;
+                // } else server_destroyed = 0;
                 break;
             default:
                 break;
