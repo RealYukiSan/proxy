@@ -48,7 +48,7 @@ void ENetDestroy(void) {
     free(ENetProxyAddress);
     if (ENetServerPeer) enet_peer_disconnect_now(ENetServerPeer, 0);
     if (ENetRelayPeer) enet_peer_disconnect_now(ENetRelayPeer, 0);
-    if (ENetRelay) enet_host_destroy(ENetRelay);
     if (ENetServer) enet_host_destroy(ENetServer);
+    if (ENetRelay) enet_host_destroy(ENetRelay);
     enet_deinitialize();
 }
