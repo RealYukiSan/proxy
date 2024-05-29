@@ -75,8 +75,8 @@ int main(void)
     enetRelay->usingNewPacket = 1;
     enet_host_compress_with_range_coder(enetRelay);
 
-    // unsigned char server_destroyed = 0;
-    // unsigned char relay_destroyed = 0;
+    unsigned char server_destroyed = 0;
+    unsigned char relay_destroyed = 0;
     
     puts("starting event loop...");
     while (1) {
@@ -124,13 +124,13 @@ int main(void)
                 enet_host_flush(enetServer);
                 enet_peer_disconnect_now(ENetServerPeer, 0);
 
-                // server_destroyed = 1;
+                server_destroyed = 1;
 
-                // if (!relay_destroyed) {
-                //     enet_host_flush(enetRelay);
-                //     enet_peer_disconnect_now(ENetRelayPeer, 0);
-                //     relay_destroyed = 1;
-                // } else relay_destroyed = 0;
+                if (!relay_destroyed) {
+                    enet_host_flush(enetRelay);
+                    enet_peer_disconnect_now(ENetRelayPeer, 0);
+                    relay_destroyed = 1;
+                } else relay_destroyed = 0;
                 break;
             default:
                 break;
@@ -161,13 +161,13 @@ int main(void)
                 enet_peer_disconnect_now(ENetRelayPeer, 0);
                 ENetRelayPeer = NULL;
 
-                // relay_destroyed = 1;                
+                relay_destroyed = 1;                
 
-                // if (!server_destroyed) {
-                //     enet_host_flush(enetServer);
-                //     enet_peer_disconnect_now(ENetServerPeer, 0);
-                //     server_destroyed = 1;
-                // } else server_destroyed = 0;
+                if (!server_destroyed) {
+                    enet_host_flush(enetServer);
+                    enet_peer_disconnect_now(ENetServerPeer, 0);
+                    server_destroyed = 1;
+                } else server_destroyed = 0;
                 break;
             default:
                 break;
