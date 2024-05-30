@@ -2,7 +2,7 @@
 TARGET := main
 
 # Source files
-SOURCES := main.c ../src/core/HttpService.c ../src/config.c ../src/utils/string.c
+SOURCES := main.c ../src/core/HttpService.c ../src/config.c ../src/utils/string.c ../src/packet/packet.c
 
 # Object files (derived from sources)
 OBJECTS := $(SOURCES:.c=.o)

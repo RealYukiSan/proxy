@@ -3,3 +3,4 @@ build
 observer/main
 observer/config.conf
 **/*.o
+*.log
