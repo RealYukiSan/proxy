@@ -18,6 +18,7 @@ run with: stdbuf --output=L ./main 2>&1 | tee main.log
 #include <stdio.h>
 
 #include <enet/enet.h>
+#include <string.h>
 #include "core/HttpService.h"
 #include "packet/packet.h"
 #include "config.h"
@@ -34,7 +35,6 @@ typedef struct {
     char* mac;
     char* gid;
     char* deviceID;
-    char isLogin;
 } user_t;
 
 typedef struct {
@@ -174,15 +174,13 @@ int main(void)
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 if (ENetRelayPeer) {
-                    if (enetServerEvent.packet->data[0] == 2) {
-                        if (!user.isLogin) {
-                            char** loginInfo = split((char *)&enetServerEvent.packet->data[4], "\n");
-                            sprintf(loginInfo[findarray(loginInfo, "meta|")], "meta|%s", user.meta);
-                            char* updatedMeta = arrayjoin(loginInfo, "\n", 1);
-                            enet_packet_resize(enetServerEvent.packet, strlen(updatedMeta) + 1);
-                            strcpy((char *)&enetServerEvent.packet->data[4], updatedMeta);
-                            user.isLogin = 1;
-                        }
+                    if (strstr((char *)&enetServerEvent.packet->data[4], "requestedName")) {
+                        char** loginInfo = split((char *)&enetServerEvent.packet->data[4], "\n");
+                        int index = findarray(loginInfo, "meta|");
+                        sprintf(loginInfo[index], "meta|%s", user.meta);
+                        char* updatedMeta = arrayjoin(loginInfo, "\n", 1);
+                        enet_packet_resize(enetServerEvent.packet, strlen(updatedMeta) + 1);
+                        strcpy((char *)&enetServerEvent.packet->data[4], updatedMeta);
                     }
 
                     puts("[SERVER EVENT] packet received from the server peer...");
